@@ -26,12 +26,10 @@ type NotifyService struct {
 	Telegram tg
 }
 
-//MFO-ACCOUNTING
-
 func New(token string, chatID int64, serviceName string) (NotificatorInterface, error) {
 	telegramService, err := telegram.New(token)
 	if err != nil {
-		return &NotifyService{}, fmt.Errorf("failed init notification service: %w", err)
+		return &NotifyService{}, err
 	}
 
 	telegramService.AddReceivers(chatID)
@@ -58,12 +56,8 @@ func (noti *NotifyService) SendMessage(info map[string]interface{}) {
 	for key, value := range info {
 		message += fmt.Sprintf("\n<b>%s</b> : %s", key, value)
 	}
-	// message := fmt.Sprintf(
-	// 	"<b>Method</b>: %s\n<b>Event</b>: %s\n<b>Error</b>: %s\n<b>RequestID</b>: %s\n<b>Time</b>: %v\n",
-	// 	info["method"], info["event"], info["error"], info["requestID"], timestamp.Format(time.RFC3339),
-	// )
 
-	message += fmt.Sprintf("\n<b>%s</b> : %s", "Time", timestamp.Format(time.RFC3339))
+	message += fmt.Sprintf("\n<b>%s</b> : %s", "time", timestamp.Format(time.RFC3339))
 
 	err := noti.Telegram.Service.Send(
 		context.Background(),
